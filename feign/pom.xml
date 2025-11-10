@@ -8,9 +8,9 @@
     <version>1</version>
   </parent>
   <groupId>com.rcl</groupId>
-  <artifactId>impl</artifactId>
+  <artifactId>feign</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>impl</name>
+  <name>feign</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>

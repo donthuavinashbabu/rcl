@@ -6,24 +6,25 @@
   <version>1</version>
   <name>rcl</name>
   <description>Political Data Platform Parent Module</description>
-  <parent>
+  <!--<parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.3.13</version>
     <relativePath/>
-  </parent>
+  </parent>-->
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <java.version>17</java.version>
-    <spring-boot.version>3.5.4</spring-boot.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <lombok.version>1.18.38</lombok.version>
+    <!--    <spring-boot.version>3.5.4</spring-boot.version>-->
   </properties>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.11.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -56,7 +57,11 @@
   </build>
   <modules>
     <module>core</module>
-    <module>impl</module>
     <module>test</module>
+    <module>okhttp</module>
+    <module>apache-http-client</module>
+    <module>retrofit</module>
+    <module>webclient</module>
+    <module>feign</module>
   </modules>
 </project>
