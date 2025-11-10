@@ -27,9 +27,22 @@
       <version>5.11.3</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-all</artifactId>
+      <version>2.3.0</version>
+    </dependency>
   </dependencies>
   <build>
-    <pluginManagement>
+    <!--<pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.springframework.boot</groupId>
@@ -53,7 +66,7 @@
           </configuration>
         </plugin>
       </plugins>
-    </pluginManagement>
+    </pluginManagement>-->
   </build>
   <modules>
     <module>core</module>
