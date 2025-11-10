@@ -1,5 +1,6 @@
 completed
 -----------
+personal: project: rcl: create project structure
 
 ------------------------------------------------------------------
 ------------------------------------------------------------------
@@ -14,7 +15,8 @@ inprogress
 ------------------------------------------------------------------
 todo
 -----
-code changes to implement rcl
-
+personal: project: rcl: RestTemplate full implementation
+personal: project: rcl: Implement error handling in RestTemplate
+personal: project: rcl: Implement interceptor to RestTemplate implementation
 ------------------------------------------------------------------
 ------------------------------------------------------------------
