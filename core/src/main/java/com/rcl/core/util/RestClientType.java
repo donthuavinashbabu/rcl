@@ -4,7 +4,8 @@ public enum RestClientType {
     APACHE_HTTP_CLIENT,
     OKHTTP,
     RETROFIT,
-    SPRING_WEBCLIENT,
+    WEBCLIENT,
     JAVA_HTTP_URL_CONNECTION,
-    FEIGN
+    FEIGN,
+    REST_TEMPLATE
 }

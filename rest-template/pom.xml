@@ -18,5 +18,74 @@
       <artifactId>core</artifactId>
       <version>1</version>
     </dependency>
+
+    <!-- Spring Web for RestTemplate -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>7.0.0-M9</version> <!-- Use latest stable version -->
+    </dependency>
+
+    <!-- Spring Core (required for context and beans) -->
+    <!--<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>5.3.30</version>
+    </dependency>-->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>7.0.0-M9</version>
+    </dependency>
+
+    <!-- Spring Context (for ApplicationContext and configuration) -->
+    <!--<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.3.30</version>
+    </dependency>-->
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>7.0.0-M9</version>
+    </dependency>
+
+    <!-- Optional: Spring Beans (for bean definitions and wiring) -->
+    <!--<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>5.3.30</version>
+    </dependency>-->
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>7.0.0-M9</version>
+    </dependency>
+
+    <!-- Optional: Jackson for JSON serialization/deserialization -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.20.0</version> <!-- Use the latest stable version -->
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+
   </dependencies>
 </project>

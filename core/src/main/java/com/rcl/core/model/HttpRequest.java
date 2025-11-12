@@ -15,5 +15,6 @@ public class HttpRequest {
     private String url;
     private Map<String, String> headers;
     private Map<String, String> queryParams;
+    private Map<String, String> pathVariables;
     private String body;
 }
