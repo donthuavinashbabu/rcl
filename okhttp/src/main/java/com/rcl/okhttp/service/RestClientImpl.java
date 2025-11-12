@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
-public class OkHttpClientImpl implements RestClient {
+public class RestClientImpl implements RestClient {
     private final OkHttpClient client = new OkHttpClient();
     private final RetryExecutor retryExecutor = new RetryExecutor("okhttp", 3, Duration.ofMillis(500));
     @Setter

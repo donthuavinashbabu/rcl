@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class RetrofitClientImpl implements RestClient {
+public class RestClientImpl implements RestClient {
     private final RetrofitService service;
     private final RetryExecutor retryExecutor;
     @Setter
     @Getter
     private AuthProvider authProvider;
 
-    public RetrofitClientImpl(String baseUrl) {
+    public RestClientImpl(String baseUrl) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl) // overridden by @Url
                 .addConverterFactory(GsonConverterFactory.create())

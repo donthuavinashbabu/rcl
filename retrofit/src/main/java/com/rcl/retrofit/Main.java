@@ -3,7 +3,7 @@ package com.rcl.retrofit;
 import com.rcl.core.RestClient;
 import com.rcl.core.model.HttpRequest;
 import com.rcl.core.model.HttpResponse;
-import com.rcl.retrofit.service.RetrofitRestClientFactory;
+import com.rcl.retrofit.service.RestClientFactoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -13,7 +13,7 @@ public class Main {
         String url = "http://localhost:8765/xitara/pdp/state-hierarchy/test";
 //        String url = "http://localhost:8765/xitara/pdp/state-hierarchy/api/v1/find-all/state";
 
-        RestClient restClient = RetrofitRestClientFactory.getInstance().getClient();
+        RestClient restClient = RestClientFactoryImpl.getInstance().getClient();
         log.info("RestClient: {}", restClient.getClass().getName());
         HttpRequest httpRequest = HttpRequest.builder().url(url).build();
         HttpResponse httpResponse = restClient.get(httpRequest);

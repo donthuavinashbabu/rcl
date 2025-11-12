@@ -7,21 +7,21 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class WebClientFactory implements RestClientFactory {
-    private static final WebClientFactory INSTANCE = new WebClientFactory();
+public final class RestClientFactoryImpl implements RestClientFactory {
+    private static final RestClientFactoryImpl INSTANCE = new RestClientFactoryImpl();
 
-    public static WebClientFactory getInstance() {
+    public static RestClientFactoryImpl getInstance() {
         return INSTANCE;
     }
 
     @Override
     public RestClient getClient() {
-        return new WebClientImpl();
+        return new RestClientImpl();
     }
 
     @Override
     public RestClient getClient(AuthProvider authProvider) {
-        return new WebClientImpl(authProvider);
+        return new RestClientImpl(authProvider);
     }
 
 }

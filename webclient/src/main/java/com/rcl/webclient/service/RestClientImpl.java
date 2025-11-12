@@ -17,14 +17,14 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 
-public class WebClientImpl implements RestClient {
+public class RestClientImpl implements RestClient {
     private final WebClient webClient;
     private final Retry retry;
     @Setter
     @Getter
     private AuthProvider authProvider;
 
-    public WebClientImpl() {
+    public RestClientImpl() {
         this.webClient = WebClient.builder()
                 .build();
 
@@ -36,7 +36,7 @@ public class WebClientImpl implements RestClient {
                 .build());
     }
 
-    public WebClientImpl(AuthProvider authProvider) {
+    public RestClientImpl(AuthProvider authProvider) {
         this.webClient = WebClient.builder()
                 .defaultHeaders(headers -> headers.setAll(authProvider.getAuthHeaders()))
                 .build();

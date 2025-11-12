@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class ApacheHttpClientImpl implements RestClient {
+public class RestClientImpl implements RestClient {
     private final CloseableHttpClient client = HttpClients.createDefault();
     private final RetryExecutor retryExecutor = new RetryExecutor("apache", 3, Duration.ofMillis(500));
     @Setter
