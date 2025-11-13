@@ -7,14 +7,15 @@ import com.rcl.core.util.RestClientType;
 
 public class RestClientFactoryImpl implements RestClientFactory {
     private static final RestClientFactoryImpl INSTANCE = new RestClientFactoryImpl();
-
+    private RestClientImpl restClient;
     public static RestClientFactoryImpl getInstance() {
         return INSTANCE;
     }
 
     @Override
     public RestClient getClient() {
-        return new RestClientImpl();
+        restClient = new RestClientImpl();
+        return restClient;
     }
 
     @Override
@@ -28,4 +29,13 @@ public class RestClientFactoryImpl implements RestClientFactory {
     public RestClientType getType() {
         return RestClientType.REST_TEMPLATE;
     }
+
+    public void enableInterceptor() {
+        restClient.enableInterceptor();
+    }
+
+    public void disableSsl() {
+        restClient.disableSsl();
+    }
+
 }

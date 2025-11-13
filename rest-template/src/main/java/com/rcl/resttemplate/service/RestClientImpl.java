@@ -7,24 +7,81 @@ import com.rcl.core.model.HttpResponse;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class RestClientImpl implements RestClient {
-    private final RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
     @Setter
     @Getter
     private AuthProvider authProvider;
+
+    public void enableInterceptor() {
+        restTemplate.setInterceptors(List.of(new RestTemplateInterceptor()));
+    }
+
+    public void disableSsl() {
+        CloseableHttpClient httpClient;
+
+        try {
+            TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+
+            SSLContext sslContext = SSLContextBuilder.create()
+                    .loadTrustMaterial(null, acceptingTrustStrategy)
+                    .build();
+
+            HostnameVerifier allowAllHosts = NoopHostnameVerifier.INSTANCE;
+
+            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+
+            httpClient = HttpClients.custom()
+                    .setSSLSocketFactory(csf)
+                    .build();
+
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+            throw new IllegalStateException("Failed to create SSL context", e);
+        }
+
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory((HttpClient) httpClient);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        restTemplate.setInterceptors(Collections.singletonList(new RestTemplateInterceptor()));
+
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        if(CollectionUtils.isNotEmpty(interceptors)) {
+            restTemplate.setInterceptors(interceptors);
+        }
+
+        this.restTemplate = restTemplate;
+    }
+
 
     @Override
     public HttpResponse get(HttpRequest request) {
