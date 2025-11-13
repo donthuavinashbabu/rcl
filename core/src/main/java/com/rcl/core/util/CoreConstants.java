@@ -8,4 +8,6 @@ public final class CoreConstants {
     public static final String UNKNOWN_EXCEPTION = "Unknown exception";
     public static final String URL = "url";
     public static final String AMPERSAND = "&";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
 }

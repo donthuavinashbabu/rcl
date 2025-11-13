@@ -6,16 +6,20 @@ import com.rcl.core.model.HttpRequest;
 import com.rcl.core.model.HttpResponse;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
+import java.net.URI;
 import java.util.Map;
 
+@Slf4j
 public class RestClientImpl implements RestClient {
     private final RestTemplate restTemplate = new RestTemplate();
     @Setter
@@ -24,64 +28,199 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public HttpResponse get(HttpRequest request) {
-        StringBuilder url = new StringBuilder(request.getUrl());
+        String url = request.getUrl();
         Map<String, String> queryParams = request.getQueryParams();
         Map<String, String> pathVariables = request.getPathVariables();
-        Map<String, String> headers = request.getHeaders();
+        Map<String, String> headerParams = request.getHeaders();
 
-        Map<String, String> pathAndQueryParams = new HashMap<>();
-        pathAndQueryParams.putAll(queryParams);
-        pathAndQueryParams.putAll(pathVariables);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
 
-        //            url.append("?");
-//            for(Map.Entry<String, String> entry : queryParams.entrySet()) {
-//                String key = entry.getKey();
-//                String value = entry.getValue();
-//                url.append(key).append("=").append(value).append(CoreConstants.AMPERSAND);
-//            }
-//            int lastIndexOfAmpersand = url.lastIndexOf(CoreConstants.AMPERSAND);
-//            url.deleteCharAt(lastIndexOfAmpersand);
-
-        String responseBody;
-        if (MapUtils.isNotEmpty(pathAndQueryParams)) {
-            responseBody = restTemplate.getForObject(url.toString(), String.class, pathAndQueryParams);
-        } else {
-            responseBody = restTemplate.getForObject(url.toString(), String.class);
+        // Add query parameters if present
+        if (MapUtils.isNotEmpty(queryParams)) {
+            queryParams.forEach(builder::queryParam);
         }
 
-        if(MapUtils.isNotEmpty(headers)) {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            for(Map.Entry<String, String> header : headers.entrySet()) {
-                String key = header.getKey();
-                String value = header.getValue();
-                httpHeaders.add(key, value);
-            }
-            HttpEntity<String> entity = new HttpEntity<String>("parameters", httpHeaders);
-            ResponseEntity<String> response = restTemplate.exchange(url.toString(), HttpMethod.GET, entity, String.class);
-            HttpResponse response1 = new HttpResponse();
-            response1.setStatusCode(response.getStatusCode().value());
-            response1.setHeaders(response.getHeaders().toSingleValueMap());
-            response1.setBody(response.getBody());
+        // Build URI with or without path variables
+        URI uri = MapUtils.isNotEmpty(pathVariables)
+                ? builder.buildAndExpand(pathVariables).toUri()
+                : builder.build().toUri();
 
+        log.info("URI={}", uri);
+
+        // Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        if (MapUtils.isNotEmpty(headerParams)) {
+            headerParams.forEach(headers::set);
         }
 
-        HttpResponse response = new HttpResponse();
-        response.setBody(responseBody);
-        return response;
+        // Wrap headers in HttpEntity
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // Make GET request
+        ResponseEntity<String> apiResponse = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+
+        // Build response
+        return buildResponse(apiResponse);
     }
 
     @Override
     public HttpResponse post(HttpRequest request) {
-        return null;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(request.getUrl());
+
+        // Add query parameters
+        if (MapUtils.isNotEmpty(request.getQueryParams())) {
+            request.getQueryParams().forEach(builder::queryParam);
+        }
+
+        // Build URI with or without path variables
+        URI uri = MapUtils.isNotEmpty(request.getPathVariables())
+                ? builder.buildAndExpand(request.getPathVariables()).toUri()
+                : builder.build().toUri();
+
+        log.info("POST URI={}", uri);
+
+        // Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        if (MapUtils.isNotEmpty(request.getHeaders())) {
+            request.getHeaders().forEach(headers::set);
+        }
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Wrap body and headers
+        HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
+
+        // Execute POST
+        ResponseEntity<String> apiResponse = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                entity,
+                String.class
+        );
+
+        return buildResponse(apiResponse);
     }
 
     @Override
     public HttpResponse put(HttpRequest request) {
-        return null;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(request.getUrl());
+
+        // Add query parameters
+        if (MapUtils.isNotEmpty(request.getQueryParams())) {
+            request.getQueryParams().forEach(builder::queryParam);
+        }
+
+        // Build URI with or without path variables
+        URI uri = MapUtils.isNotEmpty(request.getPathVariables())
+                ? builder.buildAndExpand(request.getPathVariables()).toUri()
+                : builder.build().toUri();
+
+        log.info("PUT URI={}", uri);
+
+        // Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        if (MapUtils.isNotEmpty(request.getHeaders())) {
+            request.getHeaders().forEach(headers::set);
+        }
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Wrap body and headers
+        HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
+
+        // Execute PUT
+        ResponseEntity<String> apiResponse = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                entity,
+                String.class
+        );
+
+        return buildResponse(apiResponse);
+    }
+
+    @Override
+    public HttpResponse patch(HttpRequest request) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(request.getUrl());
+
+        // Add query parameters
+        if (MapUtils.isNotEmpty(request.getQueryParams())) {
+            request.getQueryParams().forEach(builder::queryParam);
+        }
+
+        // Build URI with or without path variables
+        URI uri = MapUtils.isNotEmpty(request.getPathVariables())
+                ? builder.buildAndExpand(request.getPathVariables()).toUri()
+                : builder.build().toUri();
+
+        log.info("PATCH URI={}", uri);
+
+        // Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        if (MapUtils.isNotEmpty(request.getHeaders())) {
+            request.getHeaders().forEach(headers::set);
+        }
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Wrap body and headers
+        HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
+
+        // Execute PATCH
+        ResponseEntity<String> apiResponse = restTemplate.exchange(
+                uri,
+                HttpMethod.PATCH,
+                entity,
+                String.class
+        );
+
+        return buildResponse(apiResponse);
     }
 
     @Override
     public HttpResponse delete(HttpRequest request) {
-        return null;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(request.getUrl());
+
+        // Add query parameters
+        if (MapUtils.isNotEmpty(request.getQueryParams())) {
+            request.getQueryParams().forEach(builder::queryParam);
+        }
+
+        // Build URI with or without path variables
+        URI uri = MapUtils.isNotEmpty(request.getPathVariables())
+                ? builder.buildAndExpand(request.getPathVariables()).toUri()
+                : builder.build().toUri();
+
+        log.info("DELETE URI={}", uri);
+
+        // Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        if (MapUtils.isNotEmpty(request.getHeaders())) {
+            request.getHeaders().forEach(headers::set);
+        }
+
+        // Wrap headers (no body for DELETE)
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Execute DELETE
+        ResponseEntity<String> apiResponse = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                entity,
+                String.class
+        );
+
+        return buildResponse(apiResponse);
+    }
+
+    private HttpResponse buildResponse(ResponseEntity<String> apiResponse) {
+        HttpResponse response = new HttpResponse();
+        response.setObject(apiResponse);
+        response.setStatusCode(apiResponse.getStatusCode().value());
+        response.setHeaders(apiResponse.getHeaders().toSingleValueMap());
+        response.setBody(apiResponse.getBody());
+        return response;
     }
 }

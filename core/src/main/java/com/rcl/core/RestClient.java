@@ -11,6 +11,8 @@ public interface RestClient {
 
     HttpResponse put(HttpRequest request);
 
+    HttpResponse patch(HttpRequest request);
+
     HttpResponse delete(HttpRequest request);
 
 }

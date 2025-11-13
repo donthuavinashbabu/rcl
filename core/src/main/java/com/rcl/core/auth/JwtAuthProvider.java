@@ -1,5 +1,7 @@
 package com.rcl.core.auth;
 
+import com.rcl.core.util.CoreConstants;
+
 import java.util.Map;
 
 public class JwtAuthProvider implements AuthProvider {
@@ -11,7 +13,7 @@ public class JwtAuthProvider implements AuthProvider {
 
     @Override
     public Map<String, String> getAuthHeaders() {
-        return Map.of("Authorization", "Bearer " + token);
+        return Map.of(CoreConstants.AUTHORIZATION, CoreConstants.BEARER + token);
     }
 
 }

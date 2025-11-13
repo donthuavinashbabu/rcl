@@ -84,5 +84,8 @@ public class RestClientImpl implements RestClient {
         return null;
     }
 
-    // Implement post, put, delete similarly
+    @Override
+    public HttpResponse patch(HttpRequest request) {
+        return null;
+    }
 }

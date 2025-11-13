@@ -17,4 +17,5 @@ public class HttpResponse {
     private String body;
     private Map<String, String> headers;
     private Map<String, List<String>> multiMapHeaders;
+    private Object object;
 }
