@@ -17,7 +17,7 @@ public class Main {
         RestClient restClient = RestClientFactoryImpl.getInstance().getClient();
         log.info("RestClient: " + restClient.getClass().getName());
         HttpRequest httpRequest = HttpRequest.builder().url(url).build();
-        HttpResponse<ResponseEntity<String>> httpResponse = restClient.get(httpRequest);
+        HttpResponse httpResponse = restClient.get(httpRequest);
         log.info("Response: " + httpResponse.getBody());
         log.info("Status Code: " + httpResponse.getStatusCode());
         log.info("Multi map headers: " + httpResponse.getMultiMapHeaders());
