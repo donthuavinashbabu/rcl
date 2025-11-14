@@ -22,11 +22,11 @@
     </developer>
   </developers>
   
-  <scm>
+  <!--<scm>
     <connection>scm:git:git://github.com/donthuavinashbabu/rcl.git</connection>
     <developerConnection>scm:git:ssh://github.com:donthuavinashbabu/rcl.git</developerConnection>
     <url>https://github.com/donthuavinashbabu/rcl/tree/main</url>
-  </scm>
+  </scm>-->
   <!--<parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -96,7 +96,7 @@
       <!-- or your Log4j2 version -->
     </dependency>
   </dependencies>
-  <distributionManagement>
+  <!--<distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
@@ -105,10 +105,10 @@
       <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
-  </distributionManagement>
+  </distributionManagement>-->
   
   <build>
-    <pluginManagement>
+    <!--<pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -175,7 +175,7 @@
           </configuration>
         </plugin>
       </plugins>
-    </pluginManagement>
+    </pluginManagement>-->
     <!--<pluginManagement>
       <plugins>
         <plugin>
