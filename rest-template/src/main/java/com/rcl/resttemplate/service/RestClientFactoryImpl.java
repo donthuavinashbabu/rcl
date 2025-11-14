@@ -19,6 +19,12 @@ public class RestClientFactoryImpl implements RestClientFactory {
     }
 
     @Override
+    public RestClient getClient(RestClientType restClientType) {
+        restClient = new RestClientImpl();
+        return restClient;
+    }
+
+    @Override
     public RestClient getClient(AuthProvider authProvider) {
         RestClientImpl restClient = new RestClientImpl();
         restClient.setAuthProvider(authProvider);
@@ -30,12 +36,16 @@ public class RestClientFactoryImpl implements RestClientFactory {
         return RestClientType.REST_TEMPLATE;
     }
 
-    public void enableInterceptor() {
+    @Override
+    public RestClientFactory enableInterceptor() {
         restClient.enableInterceptor();
+        return this;
     }
 
-    public void disableSsl() {
+    @Override
+    public RestClientFactory disableSsl() {
         restClient.disableSsl();
+        return this;
     }
 
 }

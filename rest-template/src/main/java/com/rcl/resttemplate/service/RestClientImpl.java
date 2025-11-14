@@ -39,7 +39,7 @@ import java.util.Map;
 
 @Slf4j
 public class RestClientImpl implements RestClient {
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
     @Setter
     @Getter
     private AuthProvider authProvider;
@@ -53,33 +53,20 @@ public class RestClientImpl implements RestClient {
 
         try {
             TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
             SSLContext sslContext = SSLContextBuilder.create()
                     .loadTrustMaterial(null, acceptingTrustStrategy)
                     .build();
-
             HostnameVerifier allowAllHosts = NoopHostnameVerifier.INSTANCE;
-
             SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
-
             httpClient = HttpClients.custom()
                     .setSSLSocketFactory(csf)
                     .build();
-
-        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to create SSL context", e);
         }
 
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory((HttpClient) httpClient);
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        restTemplate.setInterceptors(Collections.singletonList(new RestTemplateInterceptor()));
-
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        if(CollectionUtils.isNotEmpty(interceptors)) {
-            restTemplate.setInterceptors(interceptors);
-        }
-
-        this.restTemplate = restTemplate;
+        restTemplate.setRequestFactory(requestFactory);
     }
 
 

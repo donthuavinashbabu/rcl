@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>okhttp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1</version>
   <name>okhttp</name>
 
   <dependencies>

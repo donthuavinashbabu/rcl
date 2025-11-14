@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RestClientFactoryImpl implements RestClientFactory {
     private static final RestClientFactoryImpl INSTANCE = new RestClientFactoryImpl();
+    public static final String DUMMY_URL = "http://localhost/";
 
     public static RestClientFactoryImpl getInstance() {
         return INSTANCE;
@@ -18,13 +19,18 @@ public final class RestClientFactoryImpl implements RestClientFactory {
     @Override
     public RestClient getClient() {
         // Base URL will be overridden by @Url
-        return new RestClientImpl("http://localhost/");
+        return new RestClientImpl(DUMMY_URL);
+    }
+
+    @Override
+    public RestClient getClient(RestClientType restClientType) {
+        return new RestClientImpl(DUMMY_URL);
     }
 
     @Override
     public RestClient getClient(AuthProvider authProvider) {
         // Base URL will be overridden by @Url
-        RestClientImpl retrofitClient = new RestClientImpl("http://localhost/");
+        RestClientImpl retrofitClient = new RestClientImpl(DUMMY_URL);
         retrofitClient.setAuthProvider(authProvider);
         return retrofitClient;
     }

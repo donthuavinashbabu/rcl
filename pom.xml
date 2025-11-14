@@ -111,5 +111,6 @@
     <module>webclient</module>
     <module>feign</module>
     <module>rest-template</module>
+    <module>rcl-all</module>
   </modules>
 </project>

@@ -21,6 +21,11 @@ public final class RestClientFactoryImpl implements RestClientFactory {
     }
 
     @Override
+    public RestClient getClient(RestClientType restClientType) {
+        return new RestClientImpl();
+    }
+
+    @Override
     public RestClient getClient(AuthProvider authProvider) {
         return new RestClientImpl(authProvider);
     }
