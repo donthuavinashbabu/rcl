@@ -3,7 +3,7 @@
   <groupId>com.rcl</groupId>
   <artifactId>rcl</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0</version>
+  <version>1</version>
   <name>Java Rest Clients Library</name>
   <description>Unified Java library for multiple HTTP client implementations</description>
   <url>https://github.com/donthuavinashbabu/rcl</url>
