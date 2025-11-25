@@ -9,12 +9,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.TrustStrategy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,7 +26,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.security.cert.X509Certificate;
@@ -43,23 +44,44 @@ public class RestClientImpl implements RestClient {
     }
 
     public void disableSsl() {
-        CloseableHttpClient httpClient;
-
         try {
+            // Trust all certificates
             TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-            SSLContext sslContext = SSLContextBuilder.create()
+
+            SSLContext sslContext = SSLContexts.custom()
                     .loadTrustMaterial(null, acceptingTrustStrategy)
                     .build();
-            HostnameVerifier allowAllHosts = NoopHostnameVerifier.INSTANCE;
-            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
-            httpClient = HttpClients.custom()
-                    .setSSLSocketFactory(csf)
+
+            SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+
+            // Build connection manager with custom SSL
+            PoolingHttpClientConnectionManager connManager =
+                    PoolingHttpClientConnectionManagerBuilder.create()
+                            .setSSLSocketFactory(sslSocketFactory)
+                            .build();
+
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setConnectionManager(connManager)
                     .build();
+
+            HttpComponentsClientHttpRequestFactory requestFactory =
+                    new HttpComponentsClientHttpRequestFactory(httpClient);
+            restTemplate.setRequestFactory(requestFactory);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to create SSL context", e);
         }
+    }
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory((HttpClient) httpClient);
+    public void configureTimeouts(int connectTimeoutMillis, int readTimeoutMillis) {
+        HttpClient httpClient = org.apache.hc.client5.http.impl.classic.HttpClients.createDefault();
+
+        HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
+
+        requestFactory.setConnectTimeout(connectTimeoutMillis);
+        requestFactory.setConnectionRequestTimeout(connectTimeoutMillis);
+        requestFactory.setReadTimeout(readTimeoutMillis);
+
         restTemplate.setRequestFactory(requestFactory);
     }
 
@@ -127,7 +149,8 @@ public class RestClientImpl implements RestClient {
         if (MapUtils.isNotEmpty(request.getHeaders())) {
             request.getHeaders().forEach(headers::set);
         }
-        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        setContentType(request, headers);
 
         // Wrap body and headers
         HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
@@ -164,7 +187,7 @@ public class RestClientImpl implements RestClient {
         if (MapUtils.isNotEmpty(request.getHeaders())) {
             request.getHeaders().forEach(headers::set);
         }
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        setContentType(request, headers);
 
         // Wrap body and headers
         HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
@@ -201,7 +224,7 @@ public class RestClientImpl implements RestClient {
         if (MapUtils.isNotEmpty(request.getHeaders())) {
             request.getHeaders().forEach(headers::set);
         }
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        setContentType(request, headers);
 
         // Wrap body and headers
         HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
@@ -239,8 +262,9 @@ public class RestClientImpl implements RestClient {
             request.getHeaders().forEach(headers::set);
         }
 
-        // Wrap headers (no body for DELETE)
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        setContentType(request, headers);
+
+        HttpEntity<Object> entity = new HttpEntity<>(request.getBody(), headers);
 
         // Execute DELETE
         ResponseEntity<String> apiResponse = restTemplate.exchange(
@@ -260,5 +284,14 @@ public class RestClientImpl implements RestClient {
         response.setHeaders(apiResponse.getHeaders().toSingleValueMap());
         response.setBody(apiResponse.getBody());
         return response;
+    }
+
+    private static void setContentType(HttpRequest request, HttpHeaders headers) {
+        String contentType = request.getContentType();
+        if (contentType != null && !contentType.isEmpty()) {
+            headers.setContentType(MediaType.parseMediaType(contentType));
+        } else {
+            headers.setContentType(MediaType.APPLICATION_JSON);
+        }
     }
 }

@@ -21,12 +21,17 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
         stopWatch.start();
         HttpStatusCode status = null;
         try {
+            log.info("Intercepting REST call. URL={}, METHOD={}, HEADERS={}, BODY={}",
+                    request.getURI(),
+                    request.getMethod(),
+                    request.getHeaders().toSingleValueMap(),
+                    new String(body));
             ClientHttpResponse response = execution.execute(request, body);
             status = response.getStatusCode();
             return response;
         } finally {
             stopWatch.stop();
-            log.info("Intercepting REST call. URL={}, METHOD={}, TIME={} millis, HTTP-STATUS={}", request.getURI(),
+            log.info("Intercepted REST call. URL={}, METHOD={}, TIME={} millis, HTTP-STATUS={}", request.getURI(),
                     request.getMethod(), stopWatch.getTotalTimeMillis(), status);
         }
     }

@@ -17,4 +17,5 @@ public class HttpRequest {
     private Map<String, String> queryParams;
     private Map<String, String> pathVariables;
     private String body;
+    private String contentType;
 }

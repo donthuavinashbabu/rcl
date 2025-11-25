@@ -16,4 +16,8 @@ public interface RestClientFactory {
     default RestClientFactory disableSsl(){
        return null;
     }
+
+    default RestClientFactory configureTimeouts(int connectTimeoutMillis, int readTimeoutMillis) {
+       return null;
+    }
 }

@@ -14,7 +14,9 @@ public class RestClientFactoryImpl implements RestClientFactory {
 
     @Override
     public RestClient getClient() {
-        restClient = new RestClientImpl();
+        if (restClient == null) {
+            restClient = new RestClientImpl();
+        }
         return restClient;
     }
 
@@ -38,14 +40,28 @@ public class RestClientFactoryImpl implements RestClientFactory {
 
     @Override
     public RestClientFactory enableInterceptor() {
+        if(restClient == null){
+            getClient();
+        }
         restClient.enableInterceptor();
         return this;
     }
 
     @Override
     public RestClientFactory disableSsl() {
+        if(restClient == null){
+            getClient();
+        }
         restClient.disableSsl();
         return this;
     }
 
+    @Override
+    public RestClientFactory configureTimeouts(int connectTimeoutMillis, int readTimeoutMillis) {
+        if(restClient == null){
+            getClient();
+        }
+        restClient.configureTimeouts(connectTimeoutMillis, readTimeoutMillis);
+        return this;
+    }
 }
