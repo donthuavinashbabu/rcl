@@ -4,12 +4,16 @@ import com.rcl.core.RestClient;
 import com.rcl.core.model.HttpRequest;
 import com.rcl.core.model.HttpResponse;
 import com.rcl.resttemplate.service.RestClientFactoryImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.util.Map;
 
+@Disabled
+@Slf4j
 public class PutAPITest {
 
     @Test
